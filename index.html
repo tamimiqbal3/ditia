@@ -1,0 +1,830 @@
+<!doctype html>
+<html lang="bn">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>আমাদের এক ছোট সফর: সফরনামা</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;600&family=Dancing+Script:wght@700&display=swap"
+      rel="stylesheet"
+    />
+
+    <script>
+      /* -----------------------------------------------------------
+            🎵 MUSIC CONFIGURATION (তোর লিঙ্কগুলো হুবহু রাখা হয়েছে)
+           ----------------------------------------------------------- */
+      const MUSIC_CONFIG = {
+        First:
+          "https://raw.githubusercontent.com/shahmed09919-hash/G/main/60s%20Love.mp3",
+        GariiSelect:
+          "https://raw.githubusercontent.com/shahmed09919-hash/G/main/Bibhor.mp3",
+        bus: "https://raw.githubusercontent.com/shahmed09919-hash/G/main/bus%20sohokari.mp3",
+        train:
+          "https://raw.githubusercontent.com/shahmed09919-hash/G/main/Bhalobasa%20dao%20bhalobasa%20nao.mp3",
+        rickshaw:
+          "https://raw.githubusercontent.com/shahmed09919-hash/G/main/tomar%20pichu%20chharbona.mp3",
+        umbrella:
+          "https://raw.githubusercontent.com/shahmed09919-hash/G/main/Kodom.mp3",
+        Siddhanto:
+          "https://raw.githubusercontent.com/shahmed09919-hash/G/main/ei%20tumi%20ami.mp3",
+        EiPothJodiNaSeshHoy:
+          "https://raw.githubusercontent.com/shahmed09919-hash/G/main/Ei%20path%20jodina.mp3",
+        KhamMusic:
+          "https://raw.githubusercontent.com/shahmed09919-hash/G/main/chokh.mp3",
+        ModhuHoiHoi:
+          "https://raw.githubusercontent.com/shahmed09919-hash/G/main/Mondo%20hotona.mp3",
+        chithi:
+          "https://raw.githubusercontent.com/shahmed09919-hash/G/main/Bhalobasi%20bole%20dao%20amay.mp3",
+      };
+    </script>
+
+    <style>
+      body {
+        font-family: "Hind Siliguri", sans-serif;
+        background: linear-gradient(to bottom, #a5f3fc, #eef2ff);
+        min-height: 100vh;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow-x: hidden;
+        position: relative;
+      }
+
+      #unlock-screen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(15, 23, 42, 0.95);
+        z-index: 1000;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        text-align: center;
+      }
+
+      .road {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        height: 120px;
+        background: #4b5563;
+        border-top: 5px solid #374151;
+        z-index: 0;
+      }
+      .road-lines {
+        position: absolute;
+        top: 50%;
+        width: 100%;
+        height: 6px;
+        background: repeating-linear-gradient(
+          90deg,
+          transparent,
+          transparent 40px,
+          #ffffff 40px,
+          #ffffff 80px
+        );
+        animation: moveRoad 1.5s linear infinite;
+      }
+      @keyframes moveRoad {
+        from {
+          transform: translateX(0);
+        }
+        to {
+          transform: translateX(-80px);
+        }
+      }
+
+      .scenery-item {
+        position: absolute;
+        bottom: 120px;
+        font-size: 40px;
+        animation: moveScenery 8s linear infinite;
+        z-index: 0;
+        opacity: 0.6;
+      }
+      @keyframes moveScenery {
+        from {
+          right: -100px;
+        }
+        to {
+          right: 110%;
+        }
+      }
+      .cloud {
+        position: absolute;
+        top: 50px;
+        font-size: 50px;
+        animation: moveCloud 20s linear infinite;
+        opacity: 0.5;
+        z-index: 0;
+      }
+      @keyframes moveCloud {
+        from {
+          left: -100px;
+        }
+        to {
+          left: 110%;
+        }
+      }
+
+      .main-container {
+        position: relative;
+        z-index: 10;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        padding: 20px;
+      }
+      .paper-texture {
+        background-color: #fffaf5;
+        background-image: url("https://www.transparenttextures.com/patterns/old-map.png");
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+        border-radius: 12px;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+      }
+      .glass-card {
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        border-radius: 24px;
+      }
+
+      .zoom-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 100;
+        pointer-events: none;
+      }
+      .zooming-icon {
+        font-size: 5rem;
+        transition:
+          transform 1.2s cubic-bezier(0.7, 0, 0.3, 1),
+          opacity 0.8s ease;
+      }
+      .zoom-active .zooming-icon {
+        transform: scale(45);
+        opacity: 0;
+      }
+
+      .page-fade {
+        animation: pageIn 0.8s ease-out forwards;
+      }
+      @keyframes pageIn {
+        from {
+          opacity: 0;
+          transform: scale(0.9);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+      .hidden-section {
+        display: none;
+        opacity: 0;
+      }
+
+      .back-btn {
+        position: absolute;
+        top: -45px;
+        left: 0;
+        font-size: 14px;
+        color: #4b5563;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        transition: all 0.3s;
+        background: white;
+        padding: 4px 12px;
+        border-radius: 20px;
+      }
+
+      /* 📜 VINTAGE LETTER DESIGN */
+      .vintage-paper {
+        background: #f4ecd8;
+        background-image:
+          radial-gradient(
+            circle at 50% 50%,
+            rgba(0, 0, 0, 0) 0%,
+            rgba(0, 0, 0, 0.02) 100%
+          ),
+          url("https://www.transparenttextures.com/patterns/natural-paper.png");
+        box-shadow:
+          inset 0 0 80px rgba(139, 69, 19, 0.15),
+          0 15px 40px rgba(0, 0, 0, 0.25);
+        border: 1px solid #d2b48c;
+        position: relative;
+        padding: 2.5rem 2rem;
+        max-width: 500px;
+        margin: 0 auto;
+      }
+      .letter-content {
+        font-size: 1.05rem;
+        line-height: 1.8;
+        color: #3e2723;
+        text-align: justify;
+      }
+      .signature-block {
+        margin-top: 2rem;
+        text-align: right;
+        font-family: "Dancing Script", cursive;
+        color: #5d4037;
+        font-size: 1.8rem;
+      }
+      .ps-box {
+        margin-top: 2rem;
+        padding: 1rem;
+        border: 1px dashed #8b4513;
+        background: rgba(139, 69, 19, 0.05);
+        color: #b91c1c;
+        font-weight: 600;
+        font-size: 0.95rem;
+        text-align: center;
+        border-radius: 8px;
+      }
+
+      .envelope-container {
+        position: relative;
+        width: 280px;
+        height: 160px;
+        background: #d4bc8e;
+        margin: 40px auto;
+        border-radius: 0 0 5px 5px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        perspective: 1000px;
+        cursor: pointer;
+      }
+      .envelope-flap {
+        position: absolute;
+        top: 0;
+        width: 0;
+        height: 0;
+        border-left: 140px solid transparent;
+        border-right: 140px solid transparent;
+        border-top: 100px solid #c4ab7d;
+        transform-origin: top;
+        transition: transform 0.6s ease;
+        z-index: 3;
+      }
+      .opened .envelope-flap {
+        transform: rotateX(180deg);
+        z-index: 1;
+      }
+      .opened .letter-preview {
+        transform: translateY(-70px);
+      }
+      .letter-preview {
+        position: absolute;
+        bottom: 5px;
+        left: 10px;
+        width: 260px;
+        height: 140px;
+        background: #fdf5e6;
+        border-radius: 3px;
+        transition: transform 0.6s ease;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid #e0d0b0;
+      }
+
+      /* 🏷️ CUSTOM FOOTER STYLES */
+      .global-footer {
+        margin-top: 24px;
+        font-size: 13px;
+        color: #4b5563;
+        font-weight: 600;
+        text-align: center;
+      }
+      .global-footer a {
+        color: #4f46e5;
+        text-decoration: none;
+        font-weight: 700;
+        transition: color 0.2s ease;
+      }
+      .global-footer a:hover {
+        color: #312e81;
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="unlock-screen">
+      <div class="text-7xl mb-6 animate-bounce">🎒</div>
+      <h1 class="text-3xl font-bold mb-4">আমাদের সফরনামা</h1>
+      <button
+        onclick="startJourney()"
+        class="bg-indigo-600 text-white px-12 py-5 rounded-full text-xl font-bold shadow-2xl active:scale-95 transition-all mb-8"
+      >
+        শুরু করি? 🚀
+      </button>
+
+      <!-- Footer on Unlock Screen -->
+      <div style="color: #9ca3af; font-size: 14px">
+        Developed by
+        <a
+          href="https://www.instagram.com/tamimiq_/"
+          target="_blank"
+          style="color: #818cf8; font-weight: 700"
+          >Tamim Iqbal</a
+        >
+      </div>
+    </div>
+
+    <audio id="bgMusic" loop preload="auto"></audio>
+
+    <div id="zoom-overlay" class="zoom-overlay">
+      <div id="zoom-icon" class="zooming-icon"></div>
+    </div>
+
+    <!-- Scenery -->
+    <div class="cloud" style="top: 10%; animation-delay: -2s">☁️</div>
+    <div class="scenery-item" style="animation-delay: -1s">🌳</div>
+    <div class="scenery-item" style="animation-delay: -4s">🏠</div>
+    <div class="road"><div class="road-lines"></div></div>
+
+    <div class="main-container">
+      <!-- Landing Page -->
+      <div
+        id="landing-page"
+        class="hidden-section max-w-md w-full p-10 paper-texture text-center min-h-[400px] flex flex-col justify-center"
+      >
+        <div
+          class="bg-blue-600 text-white px-8 py-4 rounded-xl inline-block shadow-lg mb-8 transform -rotate-2 self-center"
+        >
+          <h1 class="text-2xl font-bold">একটু ঘুরতে নিয়ে আসলাম.. 🎒</h1>
+        </div>
+        <button
+          onclick="navWithMusic('landing-page', 'options-page', 'GariiSelect')"
+          class="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-5 rounded-full text-lg font-semibold shadow-2xl transition-all hover:scale-105 mt-8 border-b-4 border-indigo-900"
+        >
+          আমাদের এই সফরের সঙ্গী হবে তো? 🗺️
+        </button>
+
+        <!-- Footer -->
+        <div class="global-footer">
+          Developed by
+          <a href="https://www.instagram.com/tamimiq_/" target="_blank"
+            >Tamim Iqbal</a
+          >
+        </div>
+      </div>
+
+      <!-- Options Page -->
+      <div
+        id="options-page"
+        class="hidden-section max-w-lg w-full text-center relative"
+      >
+        <div
+          class="back-btn shadow-sm"
+          onclick="navWithMusic('options-page', 'landing-page', 'First')"
+        >
+          ← ফিরে যাই
+        </div>
+        <h2
+          class="text-3xl font-bold text-gray-800 mb-6 bg-white/70 py-4 rounded-3xl shadow-sm px-4"
+        >
+          সফর শুরু হোক.. কোথায় যাবে?
+        </h2>
+
+        <div class="grid grid-cols-2 gap-4 mb-8">
+          <button
+            onclick="handleOptionClick('bus')"
+            class="p-6 glass-card border-2 border-blue-100 hover:bg-white transition-all hover:scale-105 group"
+          >
+            <span class="text-5xl block mb-2 group-hover:animate-pulse"
+              >🚌</span
+            >
+            <span class="font-bold text-blue-600 text-lg">বাস সফর</span>
+          </button>
+          <button
+            onclick="handleOptionClick('train')"
+            class="p-6 glass-card border-2 border-indigo-100 hover:bg-white transition-all hover:scale-105 group"
+          >
+            <span class="text-5xl block mb-2 group-hover:animate-pulse"
+              >🚂</span
+            >
+            <span class="font-bold text-indigo-600 text-lg">ট্রেন সফর</span>
+          </button>
+          <button
+            onclick="handleOptionClick('rickshaw')"
+            class="p-6 glass-card border-2 border-green-100 hover:bg-white transition-all hover:scale-105 group"
+          >
+            <span class="text-5xl block mb-2 group-hover:animate-pulse"
+              >🛺</span
+            >
+            <span class="font-bold text-green-700 text-lg">রিকশা ভ্রমণ</span>
+          </button>
+          <button
+            onclick="handleOptionClick('umbrella')"
+            class="p-6 glass-card border-2 border-pink-100 hover:bg-white transition-all hover:scale-105 group"
+          >
+            <span class="text-5xl block mb-2 group-hover:animate-pulse"
+              >☔</span
+            >
+            <span class="font-bold text-pink-700 text-lg">বৃষ্টিবিলাস</span>
+          </button>
+        </div>
+
+        <!-- New Instruction Added -->
+        <p
+          class="text-indigo-800 font-bold bg-white/50 backdrop-blur-sm p-4 rounded-2xl shadow-sm animate-pulse"
+        >
+          সব গুলোতেই কিন্ত একবার করে ঘুরা উচিত, ভাড়া কিন্তু আমার।। 💳
+        </p>
+
+        <!-- Footer -->
+        <div class="global-footer">
+          Developed by
+          <a href="https://www.instagram.com/tamimiq_/" target="_blank"
+            >Tamim Iqbal</a
+          >
+        </div>
+      </div>
+
+      <!-- Story Page -->
+      <div
+        id="story-page"
+        class="hidden-section max-w-lg w-full p-10 glass-card text-center relative"
+      >
+        <div class="back-btn shadow-sm" onclick="navToOptions()">
+          ← অন্য যানে যাবো
+        </div>
+        <div id="story-icon-header" class="text-7xl mb-6"></div>
+        <div
+          id="story-title"
+          class="text-2xl font-bold mb-6 text-gray-800 border-b-2 border-dashed border-gray-300 pb-2"
+        ></div>
+        <div
+          id="story-content"
+          class="text-lg leading-relaxed text-gray-700 mb-10 text-left italic"
+        ></div>
+        <button
+          id="story-btn"
+          onclick="navWithMusic('story-page', 'final-page', 'Siddhanto')"
+          class="hidden bg-gradient-to-r from-blue-600 to-indigo-700 text-white px-10 py-4 rounded-full shadow-xl font-bold text-lg hover:scale-105 transition-all mx-auto"
+        ></button>
+
+        <!-- Footer -->
+        <div class="global-footer">
+          Developed by
+          <a href="https://www.instagram.com/tamimiq_/" target="_blank"
+            >Tamim Iqbal</a
+          >
+        </div>
+      </div>
+
+      <!-- Decision Page -->
+      <div
+        id="final-page"
+        class="hidden-section max-w-lg w-full p-10 glass-card text-center border-t-8 border-blue-500 relative"
+      >
+        <div
+          class="back-btn shadow-sm"
+          onclick="nav('final-page', 'story-page')"
+        >
+          ← আরেকটু গল্প করি?
+        </div>
+        <p class="text-xl leading-relaxed text-gray-800 mb-4 font-medium">
+          সফরটা কি এখানেই শেষ? নাকি পথ চলা হবে অনন্তকাল? সিদ্ধান্ত আপনার হে
+          দ্বিতীয়া।
+        </p>
+
+        <!-- Shokh Added -->
+        <p class="text-blue-600 italic font-semibold mb-8 text-sm">
+          (তোমায় নীল রঙে দেখার শখ টা থেকে গেলো)
+        </p>
+
+        <div class="flex flex-col gap-5">
+          <button
+            onclick="showResult('stay')"
+            class="p-4 border-2 border-blue-500 text-blue-700 bg-blue-50 rounded-2xl font-bold hover:bg-blue-100 transition-all transform hover:scale-105"
+          >
+            ধীরে যাবো, সময় বাড়াতে চাই 🛣️
+          </button>
+          <button
+            onclick="navWithMusic('final-page', 'envelope-page', 'KhamMusic')"
+            class="p-5 glass-card font-bold border-2 border-indigo-600 hover:bg-white transition-all text-lg"
+          >
+            গন্তব্যে না গিয়ে নিরুদ্দেশ হই? ✨
+          </button>
+          <button
+            onclick="showResult('end')"
+            class="p-2 text-red-300 hover:text-red-500 transition-all text-xs"
+          >
+            সফর শেষ করতে চাই 🥀
+          </button>
+        </div>
+
+        <!-- Footer -->
+        <div class="global-footer">
+          Developed by
+          <a href="https://www.instagram.com/tamimiq_/" target="_blank"
+            >Tamim Iqbal</a
+          >
+        </div>
+      </div>
+
+      <!-- Envelope Page -->
+      <div
+        id="envelope-page"
+        class="hidden-section max-w-lg w-full p-10 text-center relative"
+      >
+        <div
+          class="back-btn shadow-sm"
+          onclick="nav('envelope-page', 'final-page')"
+        >
+          ← পিছে ফিরি
+        </div>
+        <h3 class="text-2xl font-bold text-indigo-900 mb-8">
+          একটি প্রাচীন গোপন খাম...
+        </h3>
+        <div
+          id="envelope-box"
+          class="envelope-container"
+          onclick="openEnvelope()"
+        >
+          <div class="envelope-flap"></div>
+          <div class="letter-preview">
+            <span class="italic text-gray-600 font-bold tracking-widest text-lg"
+              >সফরনামা</span
+            >
+          </div>
+        </div>
+        <div id="read-btn-container" class="hidden mt-8">
+          <button
+            onclick="
+              navWithMusic('envelope-page', 'final-letter-page', 'chithi')
+            "
+            class="bg-indigo-600 text-white px-12 py-4 rounded-full font-bold shadow-2xl"
+          >
+            চিঠিটা পড়তে পারেন.. ✉️
+          </button>
+        </div>
+
+        <!-- Footer -->
+        <div class="global-footer">
+          Developed by
+          <a href="https://www.instagram.com/tamimiq_/" target="_blank"
+            >Tamim Iqbal</a
+          >
+        </div>
+      </div>
+
+      <!-- Final Letter (Nabila Special Letter) -->
+      <div id="final-letter-page" class="hidden-section max-w-xl w-full py-10">
+        <div class="vintage-paper">
+          <div class="letter-content">
+            <p class="mb-4 font-bold text-xl">প্রিয় নীলাঞ্জনা,</p>
+            <p class="mb-3">
+              জানিনা এটা বলার সঠিক সময় কিনা। সময় অনেকটাই কেটে গেছে। ভেবেছিলাম,
+              ভালোবাসা আমার জন্য না- অনুভূতিগুলো বুকের এক কোণে জমে থাকবে
+              অনন্তকাল। কিন্তু তা আর ধরে রাখা যাচ্ছে না। কথায় আছে, ফল বেশি
+              পাকলেও খাওয়া যায় না… আমার অবস্থাটাও যেন ঠিক তেমনই।
+            </p>
+            <p class="mb-3">
+              শুনেছি মেয়েরা এসব ব্যাপারে অনেক চতুর- চোখ দেখেই বুঝে ফেলে কার মনে
+              কি চলছে। জানিনা, তুমিও আর কিছু ভাবো কিনা...
+            </p>
+            <p class="mb-3">
+              প্রথম দেখাতেই ভালোবাসা- এই কথাটা আগে তেমন বিশ্বাস করতাম না। কারণ
+              আমার মনে হয়, ভালোবাসা একদিনে জন্মায় না, ধীরে ধীরে বেড়ে উঠে। তাই
+              তাকে নিজের মতো করেই বাড়তে দিয়েছি। তবুও অদ্ভুতভাবে, সারাদিন এখনও
+              মন শুধু তোমাকেই খুঁজে বেড়ায়।
+            </p>
+            <p class="mb-3">
+              গ্রুপ ফটোর ঝাপসা আলোয় শত মানুষের ভিড়েও চোখ থেমে যায় এক
+              জায়গাতেই- তোমার কাছে।
+            </p>
+            <p class="mb-3">
+              ভেবোনা যে, আজই প্রথম চেষ্টা। এর আগেও বহুবার বলতে চেয়েছি… কিন্তু
+              বলা হয়ে ওঠেনি। ছেলেদের একটা অদ্ভুত সমস্যা- তুমি যদি কানে কানে
+              বলেও যাও যে, “আমি তোমাকে পছন্দ করি”, তবুও সে নিজেকেই প্রশ্ন করবে-
+              “আমাকে?” আমি সেই সারির সামনের দিকেই পড়ি।
+            </p>
+            <p class="mb-3">
+              যাকে ভালোবাসা যায়, সেই সময় সেই মানুষটাই হয়ে ওঠে সবচেয়ে দামী।
+              আর এত দামী কিছু পাওয়ার ইচ্ছা থাকলে, হারানোর ভয়টা থাকবেই। তার উপর
+              আমার মতো হতভাগা যে কিনা তোমাকে হারিয়ে ফেলেছি!
+            </p>
+            <p class="mb-3">
+              জানিনা তুমি কিসে নেই… তবে এটুকু জানি, ভালোবাসতে তো সবাই পারে।
+              ভালোবাসলেই যে প্রেম করতে হবে- এমন কোনো বাধ্যবাধকতা তো নেই।
+            </p>
+            <p class="mb-3">
+              একটা line মনে পড়ে- হুমায়ুন আহমেদ-এর ময়ুরাক্ষী উপন্যাসে শেষ
+              পাতায় ছিলো, “কারণ ভালোবাসার মানুষের খুব কাছাকাছি কখনো যেতে নেই।”
+              হয়তো খুব কাছাকাছি এখন আর যেতে পারিনা… তবুও দূর থেকেই ভালোবেসে
+              গিয়েছি তোমায়।
+            </p>
+            <p class="mb-3">
+              তুমি আমায় ভালোবাসো কিনা- জানিনা। কখনো এক মুহূর্তের জন্যও কি
+              ভেবেছো এসব নিয়ে- সেটাও জানিনা। তবুও কোথাও যেন মনে হয়, কিছু একটা
+              তো আছে..... এই সূক্ষ্ম আশাটুকু নিয়েই আজ টিকে আছি হাজারো নিরাশার
+              মাঝে....
+            </p>
+            <p class="mb-3">
+              সব কথা যদি আজই বলে ফেলি, তাহলে বাকি জীবনটা রাখবো কিসের জন্য… (যদি
+              তুমি চাও)
+            </p>
+            <p class="font-bold text-lg mt-6">ভালোবাসি তোমায়, দ্বিতীয়া।</p>
+          </div>
+          <div class="signature-block">
+            ইতি,<br />তোমার গল্পের এক অবহেলিত চরিত্র
+          </div>
+          <div class="ps-box">
+            আর হ্যাঁ, নীল রঙে কিন্তু তোমায় দারুন মানায়.. ❤️
+          </div>
+        </div>
+        <button
+          onclick="location.reload()"
+          class="mt-8 text-indigo-800 text-xs block mx-auto hover:underline font-bold opacity-50"
+        >
+          সফরটা কি আবার শুরু করা যায়? 🔄
+        </button>
+
+        <!-- Footer -->
+        <div class="global-footer">
+          Developed by
+          <a href="https://www.instagram.com/tamimiq_/" target="_blank"
+            >Tamim Iqbal</a
+          >
+        </div>
+      </div>
+
+      <!-- Result Page -->
+      <div
+        id="result-page"
+        class="hidden-section max-w-md w-full p-12 glass-card text-center shadow-2xl"
+      >
+        <div id="res-icon" class="text-8xl mb-6"></div>
+        <p
+          id="res-text"
+          class="text-2xl font-bold text-gray-800 mb-10 leading-relaxed"
+        ></p>
+        <button
+          onclick="location.reload()"
+          class="bg-gray-800 text-white px-8 py-2 rounded-full text-sm"
+        >
+          আবার শুরু করি
+        </button>
+
+        <!-- Footer -->
+        <div class="global-footer">
+          Developed by
+          <a href="https://www.instagram.com/tamimiq_/" target="_blank"
+            >Tamim Iqbal</a
+          >
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const audio = document.getElementById("bgMusic");
+      const stories = {
+        bus: {
+          symbol: "🚌",
+          title: "বাস সফর",
+          btn: "জানালা খোলা রাখবো? 💨",
+          text: "বাসে পাশের সিটটায় বসার জন্য ধন্যবাদ৷ গন্তব্য অনেক দূর। হয়তো চলে যাবে এর মাঝে কতক জোছনা রাত, কয়েক দফা বয়ে যাবে কালবৈশাখী ঝড়। vertu হয়তো শেষ হবেনা এই পথ...",
+        },
+        train: {
+          symbol: "🚂",
+          title: "ট্রেন সফর",
+          btn: "একটু চা হয়ে যাক? ☕",
+          text: "এই আঁকাবাঁকা পথের শেষ বগিতে সঙ্গ দেওয়ার জন্য একান্ত ধন্যবাদ। শেষ স্টেশন আসতে এখনো ঢের সময় বাকি। কুয়াশার চাদরে ঢেকে আছে বাইরের ভুবন। হয়তো এক চাদরে মুড়ি দিয়ে একটুখানি চা বিলাস আর خانিক্টা গল্প। মন্দ হয়না কিন্ত.... ",
+        },
+        rickshaw: {
+          symbol: "🛺",
+          title: "রিকশা ভ্রমণ",
+          btn: "হুড কি তুলে দেবো? 🌧️",
+          text: "শুধু দুইজন পাশাপাশি৷ এ যেনো এক স্বাপ্নিক যাত্রা৷ পথের মাঝে ভাঙ্গা জায়গা গুলোও কিছুটা উপকার করে দেয় কিন্ত। সেই গন্তব্য আর যেন শেষ হতে চাইবেনা... তোমার পড়নে নীল এক শাড়ি, হাতে গুটি কয়েক হরেক রঙের চুড়ি। যেনো সেগুলোর শব্দেই চলে যাই অন্য ভুবনে....",
+        },
+        umbrella: {
+          symbol: "☔",
+          title: "বৃষ্টিবিলাস",
+          btn: "হাত ভিজাতে চাও? 💧",
+          text: "চারিদিকে ঝুম বৃষ্টি। ছাতাটা বৃষ্টি ঠেকানোর কাজ কতটা করছে জানিনা কিন্ত সেটা যে এক বৃত্তের মাঝে আমাদের এক করেছে তা বলতে পারি। সেই হাটায় কোনো ক্লান্তি কাজ করেনা, করেনা পথ শেষ হওয়ার বাসনা। দৃষ্টি শুধু চেয়ে থাকে তোমার সেই চোখ আর হাতে মোড়ানো বেলি ফুলের গজরায়...",
+        },
+      };
+
+      function startJourney() {
+        document.getElementById("unlock-screen").style.display = "none";
+        playMusic("First");
+        nav("none", "landing-page");
+      }
+
+      function playMusic(key) {
+        const url = MUSIC_CONFIG[key];
+        if (url && url !== "") {
+          audio.pause();
+          audio.src = url;
+          audio.currentTime = 0;
+          audio.play().catch((e) => console.log("Playback error: ", e));
+        }
+      }
+
+      function handleOptionClick(type) {
+        playMusic(type);
+        const symbol = stories[type].symbol;
+        const overlay = document.getElementById("zoom-overlay");
+        const icon = document.getElementById("zoom-icon");
+        icon.innerText = symbol;
+        overlay.style.display = "flex";
+        setTimeout(() => {
+          overlay.classList.add("zoom-active");
+          setTimeout(() => {
+            showStoryContent(type);
+            overlay.style.display = "none";
+            overlay.classList.remove("zoom-active");
+          }, 1000);
+        }, 50);
+      }
+
+      function showStoryContent(type) {
+        const s = stories[type];
+        document.getElementById("story-icon-header").innerText = s.symbol;
+        document.getElementById("story-title").innerText = s.title;
+        const content = document.getElementById("story-content");
+        const btn = document.getElementById("story-btn");
+        content.innerText = s.text;
+        btn.innerText = s.btn;
+        btn.classList.add("hidden");
+        nav("options-page", "story-page");
+        setTimeout(() => {
+          btn.classList.remove("hidden");
+          btn.classList.add("page-fade");
+        }, 800);
+      }
+
+      function navToOptions() {
+        playMusic("GariiSelect");
+        nav("story-page", "options-page");
+      }
+
+      function nav(from, to) {
+        if (from !== "none") {
+          const f = document.getElementById(from);
+          f.style.opacity = "0";
+          setTimeout(() => {
+            f.style.display = "none";
+          }, 400);
+        }
+        const t = document.getElementById(to);
+        setTimeout(() => {
+          t.style.display = "block";
+          t.classList.remove("hidden-section");
+          t.classList.add("page-fade");
+          t.style.opacity = "1";
+        }, 450);
+      }
+
+      function navWithMusic(from, to, musicKey) {
+        playMusic(musicKey);
+        nav(from, to);
+      }
+
+      function openEnvelope() {
+        document.getElementById("envelope-box").classList.add("opened");
+        setTimeout(() => {
+          document
+            .getElementById("read-btn-container")
+            .classList.remove("hidden");
+          document
+            .getElementById("read-btn-container")
+            .classList.add("page-fade");
+        }, 800);
+      }
+
+      function showResult(type) {
+        const icon = document.getElementById("res-icon");
+        const text = document.getElementById("res-text");
+        if (type === "stay") {
+          playMusic("EiPothJodiNaSeshHoy");
+          icon.innerText = "🛣️";
+          text.innerText = "এই পথ যদি না শেষ হয়, তবে কেমন হতো? তুমিই বলো...";
+        } else if (type === "end") {
+          playMusic("ModhuHoiHoi");
+          icon.innerText = "🎸";
+          text.innerText =
+            "তুমি আমার হলে মন্দ হতোনা... কিন্ত পথ টা ছিলো অনেক স্বপ্নময়।";
+        }
+        nav("final-page", "result-page");
+      }
+    </script>
+  </body>
+</html>
